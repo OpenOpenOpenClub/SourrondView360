@@ -10,6 +10,7 @@ find_package(OpenCV REQUIRED)
 find_package(OpenGL REQUIRED) # 用于查找 OpenGL 库
 find_package(glfw3 REQUIRED) # 用于查找 GLFW 库
 find_package(glm REQUIRED) # 如果使用系统安装的 GLM
+find_package(Threads REQUIRED) # stb_image 可能需要线程库
 
 # GLAD (需要预先生成准备好)
 add_library(glad_lib ${CMAKE_CURRENT_SOURCE_DIR}/external/glad/src/glad.c)
@@ -24,8 +25,10 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/rendering
     ${CMAKE_CURRENT_SOURCE_DIR}/src/scene
     ${CMAKE_CURRENT_SOURCE_DIR}/src/imaging
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/utils
     ${glm_SOURCE_DIR} # GLM include directory from FetchContent
     ${CMAKE_CURRENT_SOURCE_DIR}/external/glad/include # GLAD include directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/external
 )
 
 message(STATUS "OpenCV include path: ${OpenCV_INCLUDE_DIRS}")
@@ -39,10 +42,20 @@ message(STATUS "GLM include path: ${glm_SOURCE_DIR}") # For FetchContent
 # 将 prms.hpp 移动到 srcs/common/prms.hpp
 add_executable(avm_app_3d
     src/app/main.cpp # 新的主文件
+
     src/common/common.cpp
 
-    src/rendering/shader.cpp # <--- 添加 Shader 源文件
-    src/rendering/renderer.cpp # <--- 添加 Renderer 源文件
+    src/rendering/shader.cpp
+    src/rendering/renderer.cpp
+    src/rendering/mesh.cpp
+
+    src/scene/camera.cpp # <--- Add Camera source file
+    src/scene/cameracontroller.cpp # <--- Add CameraController source file
+
+    src/utils/model_loader.cpp
+    src/utils/texture_utils.cpp
+
+    external/tinyobjloader/tiny_obj_loader.cc
 
     # src/rendering/renderer.cpp # 稍后添加
     # src/scene/scenemanager.cpp # 稍后添加
@@ -58,6 +71,7 @@ target_link_libraries(avm_app_3d
     OpenGL::GL # 标准 OpenGL 目标
     glfw # GLFW 目标
     glad_lib # 如果创建了 glad_lib 目标
+    m # Link math library (needed by stb_image on Linux)
 )
 
 # # --- 保留旧的标定程序 (如果需要) ---

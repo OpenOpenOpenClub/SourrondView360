@@ -3,50 +3,49 @@
  * author: joker.mao
  * date: 2023/07/15
  * copyright: ADAS_EYES all right reserved
-*/
-
+ */
 
 #ifndef COM_H
 #define COM_H
 
+// #define STB_IMAGE_IMPLEMENTATION
+// #include <stb/stb_image.h>
+
 #include "prms.hpp"
+#include <glad/glad.h> // 需要 GLuint
 
-struct CameraPrms
-{
-    std::string name;
-    cv::Mat dist_coff;
-    cv::Mat camera_matrix;
-    cv::Mat project_matrix;
-    cv::Mat trans_matrix;
-    cv::Size size;
+struct CameraPrms {
+  std::string name;
+  cv::Mat dist_coff;
+  cv::Mat camera_matrix;
+  cv::Mat project_matrix;
+  cv::Mat trans_matrix;
+  cv::Size size;
 
-    cv::Mat scale_xy;
-    cv::Mat shift_xy;
+  cv::Mat scale_xy;
+  cv::Mat shift_xy;
 };
 
 struct BgrSts {
-    int b;
-    int g;
-    int r;
+  int b;
+  int g;
+  int r;
 
-    BgrSts() {
-        b = g = r = 0;
-    }
+  BgrSts() { b = g = r = 0; }
 };
 
-template<typename _T>
-static inline _T clip(float data, int max)
-{
-    if (data > max)
-        return max;
-    return (_T)data;
+template <typename _T> static inline _T clip(float data, int max) {
+  if (data > max)
+    return max;
+  return (_T)data;
 }
 
-void display_mat(cv::Mat& img, std::string name);
-bool read_prms(const std::string& path, CameraPrms& prms);
-bool save_prms(const std::string& path, CameraPrms& prms);
-void undist_by_remap(const cv::Mat& src, cv::Mat& dst, const CameraPrms& prms);
+void display_mat(cv::Mat &img, std::string name);
+bool read_prms(const std::string &path, CameraPrms &prms);
+bool save_prms(const std::string &path, CameraPrms &prms);
+void undist_by_remap(const cv::Mat &src, cv::Mat &dst, const CameraPrms &prms);
 
 void merge_image(cv::Mat src1, cv::Mat src2, cv::Mat w, cv::Mat out);
-void awb_and_lum_banlance(std::vector<cv::Mat*> srcs);
+void awb_and_lum_banlance(std::vector<cv::Mat *> srcs);
+
 #endif
